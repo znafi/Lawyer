@@ -158,14 +158,19 @@ def search_laws():
 
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
+    print("Languages endpoint called")  # Debug log
     try:
         # Query distinct languages from the database
         languages = db.session.query(Law.language).distinct().all()
+        print(f"Found languages in DB: {languages}")  # Debug log
+        
         # Convert to list of language codes
         language_list = [lang[0] for lang in languages]
+        print(f"Language list: {language_list}")  # Debug log
         
         # If no languages found, return default languages
         if not language_list:
+            print("No languages found, using defaults")  # Debug log
             language_list = ['en', 'fr']
             
         # Map language codes to full names
@@ -181,6 +186,7 @@ def get_languages():
             for code in language_list
         ]
         
+        print(f"Sending response: {response}")  # Debug log
         return jsonify(response)
     except Exception as e:
         print(f"Error getting languages: {str(e)}")  # Debug log
