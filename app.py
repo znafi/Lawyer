@@ -11,7 +11,14 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Configure SQLAlchemy
 if os.environ.get('RENDER'):
     # Use PostgreSQL in production
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '').replace('postgres://', 'postgresql://')
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        # Render provides PostgreSQL URLs starting with postgres://, but SQLAlchemy requires postgresql://
+        database_url = database_url.replace('postgres://', 'postgresql://')
+    else:
+        # Fallback to SQLite if no DATABASE_URL is set
+        database_url = 'sqlite:///legal_database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
     # Use SQLite in development
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///legal_database.db'
