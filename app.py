@@ -43,6 +43,47 @@ class Law(db.Model):
     section = db.Column(db.String(100))
     year = db.Column(db.Integer)
 
+def init_database():
+    with app.app_context():
+        # Create all tables
+        db.create_all()
+        
+        # Check if we need to initialize data
+        if Country.query.count() == 0:
+            # Add Canada
+            canada = Country(name='Canada', code='CA')
+            db.session.add(canada)
+            db.session.commit()
+
+            # Add some initial laws
+            law1 = Law(
+                title='Constitution Act, 1867',
+                content='The Constitution Act, 1867 is a major part of Canada\'s Constitution...',
+                language='en',
+                country_id=canada.id,
+                keywords='constitution,fundamental law,confederation',
+                source='Government of Canada',
+                section='Constitution',
+                year=1867
+            )
+            
+            law2 = Law(
+                title='Loi constitutionnelle de 1867',
+                content='La Loi constitutionnelle de 1867 est une partie majeure de la Constitution du Canada...',
+                language='fr',
+                country_id=canada.id,
+                keywords='constitution,loi fondamentale,confédération',
+                source='Gouvernement du Canada',
+                section='Constitution',
+                year=1867
+            )
+            
+            db.session.add_all([law1, law2])
+            db.session.commit()
+
+# Initialize database
+init_database()
+
 # Routes
 @app.route('/')
 def serve():
@@ -117,17 +158,36 @@ def search_laws():
 
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
-    languages = [
-        {'code': 'en', 'name': 'English'},
-        {'code': 'es', 'name': 'Spanish'},
-        {'code': 'fr', 'name': 'French'},
-        {'code': 'de', 'name': 'German'},
-        {'code': 'zh', 'name': 'Chinese'},
-        {'code': 'ar', 'name': 'Arabic'}
-    ]
-    return jsonify(languages)
+    try:
+        # Query distinct languages from the database
+        languages = db.session.query(Law.language).distinct().all()
+        # Convert to list of language codes
+        language_list = [lang[0] for lang in languages]
+        
+        # If no languages found, return default languages
+        if not language_list:
+            language_list = ['en', 'fr']
+            
+        # Map language codes to full names
+        language_names = {
+            'en': 'English',
+            'fr': 'French',
+            # Add more languages as needed
+        }
+        
+        # Format response
+        response = [
+            {'code': code, 'name': language_names.get(code, code)}
+            for code in language_list
+        ]
+        
+        return jsonify(response)
+    except Exception as e:
+        print(f"Error getting languages: {str(e)}")  # Debug log
+        return jsonify([
+            {'code': 'en', 'name': 'English'},
+            {'code': 'fr', 'name': 'French'}
+        ])
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
