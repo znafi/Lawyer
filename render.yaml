@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: legal-reference-system
+    env: python
+    buildCommand: pip install -r requirements.txt && cd frontend && npm install && npm run build && cd ..
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: FLASK_ENV
+        value: production
+    staticPublishPath: ./frontend/build
