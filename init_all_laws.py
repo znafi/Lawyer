@@ -246,6 +246,103 @@ def add_additional_laws(country_id):
             "source": "Environmental Protection Act",
             "section": "General Provisions",
             "year": 2023
+        },
+        # DUI and Impaired Driving Laws
+        {
+            "title": "Impaired Driving and DUI Laws",
+            "content": """Drinking and Driving Laws in Canada:
+
+1. Blood Alcohol Concentration (BAC) Limits:
+- 0.08% (80mg/100ml) - Criminal Code limit
+- 0.05% to 0.079% - Provincial administrative penalties
+- Zero tolerance for new drivers
+- Zero tolerance for commercial drivers
+
+2. Penalties for DUI/Impaired Driving:
+First Offense:
+- Minimum $1000 fine
+- Mandatory driving prohibition (1-3 years)
+- Criminal record
+- Mandatory education program
+- Possible jail time (up to 10 years for dangerous driving)
+
+Second Offense:
+- Minimum 30 days imprisonment
+- Longer driving prohibition
+- Mandatory alcohol ignition interlock
+
+Additional Penalties:
+- Vehicle impoundment
+- License suspension
+- Insurance rate increase
+- Border crossing restrictions
+
+3. Types of Impaired Driving:
+- Alcohol impairment
+- Drug impairment (including cannabis)
+- Combined alcohol and drug impairment
+- Driving while fatigued
+
+4. Testing and Evidence:
+- Breathalyzer tests
+- Field sobriety tests
+- Drug recognition evaluation
+- Blood tests
+- Refusal to provide sample (criminal offense)
+
+5. Legal Rights During DUI Stop:
+- Right to remain silent
+- Right to legal counsel
+- Right to know the reason for stop
+- Right to second breath test""",
+            "language": "en",
+            "country_id": country_id,
+            "keywords": "DUI, drunk driving, impaired driving, drinking and driving, BAC, blood alcohol, breathalyzer, RIDE program, license suspension, criminal code, driving under influence, alcohol, cannabis, drugs, driving prohibition, vehicle impoundment, drunk, intoxicated driving, DWI, over 80, refuse breath sample",
+            "source": "Criminal Code of Canada, Highway Traffic Act",
+            "section": "Impaired Driving Offenses",
+            "year": 2023
+        },
+        # Traffic Violations and Penalties
+        {
+            "title": "Traffic Violations and Penalties",
+            "content": """Traffic Violations in Canada:
+
+1. Moving Violations:
+- Speeding tickets
+- Running red lights
+- Illegal turns
+- Failure to yield
+- Following too closely
+- Careless driving
+- Racing/Stunt driving
+- Distracted driving
+- Driving without insurance
+- Driving while suspended
+
+2. Demerit Point System:
+- Point accumulation periods
+- License suspension thresholds
+- Insurance impact
+- Point removal process
+
+3. Fines and Penalties:
+- Graduated fine system
+- Court appearances
+- License suspensions
+- Vehicle impoundment
+- Insurance implications
+
+4. Administrative Penalties:
+- Immediate roadside suspensions
+- Vehicle seizures
+- Administrative driving prohibitions
+- Mandatory driver improvement programs""",
+            "language": "en",
+            "country_id": country_id,
+            "keywords": "traffic ticket, speeding ticket, running red light, illegal turn, yield, careless driving, racing, stunt driving, distracted driving, no insurance, suspended license, demerit points, traffic court, traffic violation, driving offense, traffic fine, traffic penalty, driving prohibition, license suspension",
+            "source": "Highway Traffic Act",
+            "section": "Traffic Violations",
+            "year": 2023
         }
     ]
     
@@ -319,6 +416,62 @@ def add_french_translations(country_id):
             "keywords": "immigration, réfugié, résidence permanente, citoyenneté",
             "source": "Loi sur l'immigration et la protection des réfugiés",
             "section": "Dispositions générales",
+            "year": 2023
+        },
+        # DUI Laws in French
+        {
+            "title": "Lois sur la conduite avec facultés affaiblies",
+            "content": """Lois sur l'alcool au volant au Canada:
+
+1. Limites d'alcoolémie:
+- 0,08 % (80mg/100ml) - Limite du Code criminel
+- 0,05 % à 0,079 % - Sanctions administratives provinciales
+- Tolérance zéro pour les nouveaux conducteurs
+- Tolérance zéro pour les conducteurs commerciaux
+
+2. Sanctions pour conduite avec facultés affaiblies:
+Première infraction:
+- Amende minimale de 1000 $
+- Interdiction de conduire obligatoire (1-3 ans)
+- Casier judiciaire
+- Programme de formation obligatoire
+
+Deuxième infraction:
+- Emprisonnement minimum de 30 jours
+- Interdiction de conduire prolongée
+- Antidémarreur éthylométrique obligatoire""",
+            "language": "fr",
+            "country_id": country_id,
+            "keywords": "conduite avec facultés affaiblies, alcool au volant, ivresse au volant, alcoolémie, éthylotest, suspension de permis, code criminel, cannabis, drogues, interdiction de conduire, saisie de véhicule, conduite en état d'ébriété",
+            "source": "Code criminel du Canada, Code de la route",
+            "section": "Infractions de conduite avec facultés affaiblies",
+            "year": 2023
+        },
+        # Traffic Violations in French
+        {
+            "title": "Infractions routières et pénalités",
+            "content": """Infractions routières au Canada:
+
+1. Infractions mobiles:
+- Excès de vitesse
+- Feux rouges grillés
+- Virages illégaux
+- Omission de céder le passage
+- Suivre de trop près
+- Conduite imprudente
+- Course/Conduite dangereuse
+- Conduite distraite
+
+2. Système de points d'inaptitude:
+- Périodes d'accumulation de points
+- Seuils de suspension de permis
+- Impact sur l'assurance
+- Processus de retrait des points""",
+            "language": "fr",
+            "country_id": country_id,
+            "keywords": "contravention, excès de vitesse, feu rouge, virage illégal, céder passage, conduite imprudente, course, conduite dangereuse, conduite distraite, sans assurance, permis suspendu, points d'inaptitude, tribunal de la circulation, infraction routière, amende routière, pénalité routière",
+            "source": "Code de la route",
+            "section": "Infractions routières",
             "year": 2023
         }
     ]
