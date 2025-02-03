@@ -1,51 +1,37 @@
 from app import app, db, Country, Law
 from add_canadian_constitution import add_canadian_constitution
 from add_canadian_common_laws import add_canadian_common_laws
-from add_detailed_traffic_laws import add_traffic_laws
+from add_detailed_traffic_laws import add_detailed_traffic_laws
 
 def init_all_laws():
-    print("Starting law initialization...")
     with app.app_context():
-        try:
-            # First, ensure we have the country
-            canada = Country.query.filter_by(code="CA").first()
-            if not canada:
-                print("Creating Canada in database...")
-                canada = Country(name='Canada', code='CA')
-                db.session.add(canada)
-                db.session.commit()
+        # Reset database
+        db.drop_all()
+        db.create_all()
+        
+        # Add Canada
+        canada = Country(name='Canada', code='CA')
+        db.session.add(canada)
+        db.session.commit()
+        
+        # Add laws
+        add_canadian_constitution()
+        add_canadian_common_laws()
+        add_detailed_traffic_laws(canada.id)
+        add_additional_laws(canada.id)
+        add_french_translations(canada.id)
+        
+        # Add additional laws
+        print("Adding additional laws...")
+        add_additional_laws(canada.id)
+        
+        # Add French translations
+        print("Adding French translations...")
+        add_french_translations(canada.id)
+        
+        db.session.commit()
+        print("Law initialization complete!")
             
-            # Clear existing laws if any
-            print("Clearing existing laws...")
-            Law.query.delete()
-            db.session.commit()
-            
-            # Add all types of laws
-            print("Adding constitutional laws...")
-            add_canadian_constitution()
-            
-            print("Adding common laws...")
-            add_canadian_common_laws()
-            
-            print("Adding traffic laws...")
-            add_traffic_laws()
-            
-            # Add additional laws
-            print("Adding additional laws...")
-            add_additional_laws(canada.id)
-            
-            # Add French translations
-            print("Adding French translations...")
-            add_french_translations(canada.id)
-            
-            db.session.commit()
-            print("Law initialization complete!")
-            
-        except Exception as e:
-            print(f"Error during law initialization: {str(e)}")
-            db.session.rollback()
-            raise
-
 def add_additional_laws(country_id):
     additional_laws = [
         # Criminal Law Section

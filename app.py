@@ -111,7 +111,7 @@ def get_countries():
 def search_laws():
     try:
         country_id = request.args.get('country_id')
-        keywords = request.args.get('keywords', '').lower()
+        keywords = request.args.get('keywords', '').lower().strip()
         language = request.args.get('language', 'en')
         
         print(f"Search request - country_id: {country_id}, keywords: {keywords}, language: {language}")  # Debug log
@@ -119,29 +119,79 @@ def search_laws():
         if not country_id or not keywords:
             return jsonify({'error': 'Missing required parameters'}), 400
         
-        # Split keywords into individual terms
-        search_terms = keywords.split()
+        # Split keywords into individual terms and remove empty strings
+        search_terms = [term.strip() for term in keywords.split() if term.strip()]
         print(f"Search terms: {search_terms}")  # Debug log
         
-        # Build search conditions
+        # Build search conditions with better keyword matching
         conditions = []
         for term in search_terms:
+            # Direct matches in keywords field (higher priority)
+            conditions.append(Law.keywords.ilike(f'%{term}%'))
+            
+            # Exact matches in title and content
+            conditions.append(Law.title.ilike(f'% {term} %'))
+            conditions.append(Law.content.ilike(f'% {term} %'))
+            
+            # Partial matches in title and content
             conditions.append(Law.title.ilike(f'%{term}%'))
             conditions.append(Law.content.ilike(f'%{term}%'))
-            conditions.append(Law.keywords.ilike(f'%{term}%'))
+            
+            # Match at start of words
+            conditions.append(Law.title.ilike(f'% {term}%'))
+            conditions.append(Law.content.ilike(f'% {term}%'))
+            
+            # Match common variations
+            if term.endswith('s'):
+                # Try singular form
+                singular = term[:-1]
+                conditions.append(Law.keywords.ilike(f'%{singular}%'))
+                conditions.append(Law.title.ilike(f'%{singular}%'))
+                conditions.append(Law.content.ilike(f'%{singular}%'))
+            else:
+                # Try plural form
+                plural = term + 's'
+                conditions.append(Law.keywords.ilike(f'%{plural}%'))
+                conditions.append(Law.title.ilike(f'%{plural}%'))
+                conditions.append(Law.content.ilike(f'%{plural}%'))
         
-        # Search in both title, content, and keywords fields
+        # Search in title, content, and keywords fields
         laws = Law.query.filter_by(country_id=country_id, language=language)\
             .filter(or_(*conditions))\
             .all()
         
         print(f"Found {len(laws)} matching laws")  # Debug log
         
-        # Sort results by relevance (number of keyword matches)
+        # Enhanced relevance calculation
         def calculate_relevance(law):
+            relevance = 0
             text = (law.title + ' ' + law.content + ' ' + law.keywords).lower()
-            return sum(text.count(term) for term in search_terms)
+            
+            for term in search_terms:
+                # Keywords matches have highest weight
+                relevance += law.keywords.lower().count(term) * 10
+                
+                # Title matches have medium weight
+                relevance += law.title.lower().count(term) * 5
+                
+                # Content matches have normal weight
+                relevance += law.content.lower().count(term) * 1
+                
+                # Check for singular/plural variations
+                if term.endswith('s'):
+                    singular = term[:-1]
+                    relevance += law.keywords.lower().count(singular) * 8
+                    relevance += law.title.lower().count(singular) * 4
+                    relevance += law.content.lower().count(singular) * 1
+                else:
+                    plural = term + 's'
+                    relevance += law.keywords.lower().count(plural) * 8
+                    relevance += law.title.lower().count(plural) * 4
+                    relevance += law.content.lower().count(plural) * 1
+            
+            return relevance
         
+        # Sort by relevance score
         laws.sort(key=calculate_relevance, reverse=True)
         
         results = [{
@@ -151,7 +201,8 @@ def search_laws():
             'language': law.language,
             'source': law.source,
             'section': law.section,
-            'year': law.year
+            'year': law.year,
+            'relevance': calculate_relevance(law)  # Include relevance score in results
         } for law in laws]
         
         print(f"Returning {len(results)} results")  # Debug log
