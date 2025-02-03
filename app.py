@@ -48,38 +48,42 @@ def init_database():
         # Create all tables
         db.create_all()
         
-        # Check if we need to initialize data
-        if Country.query.count() == 0:
-            # Add Canada
-            canada = Country(name='Canada', code='CA')
-            db.session.add(canada)
-            db.session.commit()
+        try:
+            # Import and run the comprehensive law initialization
+            from init_all_laws import init_all_laws
+            init_all_laws()
+        except Exception as e:
+            print(f"Error initializing laws: {str(e)}")
+            # If comprehensive initialization fails, add basic data
+            if Country.query.count() == 0:
+                canada = Country(name='Canada', code='CA')
+                db.session.add(canada)
+                db.session.commit()
 
-            # Add some initial laws
-            law1 = Law(
-                title='Constitution Act, 1867',
-                content='The Constitution Act, 1867 is a major part of Canada\'s Constitution...',
-                language='en',
-                country_id=canada.id,
-                keywords='constitution,fundamental law,confederation',
-                source='Government of Canada',
-                section='Constitution',
-                year=1867
-            )
-            
-            law2 = Law(
-                title='Loi constitutionnelle de 1867',
-                content='La Loi constitutionnelle de 1867 est une partie majeure de la Constitution du Canada...',
-                language='fr',
-                country_id=canada.id,
-                keywords='constitution,loi fondamentale,confédération',
-                source='Gouvernement du Canada',
-                section='Constitution',
-                year=1867
-            )
-            
-            db.session.add_all([law1, law2])
-            db.session.commit()
+                law1 = Law(
+                    title='Constitution Act, 1867',
+                    content='The Constitution Act, 1867 is a major part of Canada\'s Constitution...',
+                    language='en',
+                    country_id=canada.id,
+                    keywords='constitution,fundamental law,confederation',
+                    source='Government of Canada',
+                    section='Constitution',
+                    year=1867
+                )
+                
+                law2 = Law(
+                    title='Loi constitutionnelle de 1867',
+                    content='La Loi constitutionnelle de 1867 est une partie majeure de la Constitution du Canada...',
+                    language='fr',
+                    country_id=canada.id,
+                    keywords='constitution,loi fondamentale,confédération',
+                    source='Gouvernement du Canada',
+                    section='Constitution',
+                    year=1867
+                )
+                
+                db.session.add_all([law1, law2])
+                db.session.commit()
 
 # Initialize database
 init_database()
